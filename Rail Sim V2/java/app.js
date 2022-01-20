@@ -1,5 +1,6 @@
 // Global variables
 var box = new SelectionBox(document.querySelector(".selection-box"));
+var config = new ConfigBox(document.querySelector(".config-box"));
 var statboxs = [];
 // building the yard div elements
 
@@ -14,6 +15,17 @@ var yard = {
   track6: { spots: new Array(10).fill(null), length: 10 },
   track7: { spots: new Array(10).fill(null), length: 10 },
 };
+
+// used to clear a track out
+function clearTrack(trackID) {
+  let spots = document.getElementById(trackID).childNodes;
+  spots.forEach((spot) => {
+    if (spot.hasChildNodes()) {
+      let car = spot.firstChild;
+      spot.removeChild(car);
+    }
+  });
+}
 
 // function to take string variable and fill track array with either empty, loaded or bo cars
 function initCars(string, track) {
@@ -36,6 +48,9 @@ function initCars(string, track) {
       console.log("to many cars");
       return;
     }
+
+    // clearing track
+    clearTrack(track);
 
     // itterating through groups and building tracks
     // offest index is used to push everycar down the track when there is space;
@@ -124,6 +139,19 @@ function initStatBoxs() {
 
 function initEventHandlers() {
   let isMouseDown = false;
+
+  function click(e) {
+    config.click(e);
+  }
+
+  function input(e) {
+    config.input(e);
+  }
+
+  function configKeyDown(e) {
+    config.keyDown(e);
+  }
+
   function mouseDown(e) {
     // updating selection box intial coordinates
     isMouseDown = true;
@@ -139,15 +167,23 @@ function initEventHandlers() {
     box.mouseUp(e);
   }
 
-  document.addEventListener("mousedown", mouseDown);
-  document.addEventListener("mousemove", mouseMove);
-  document.addEventListener("mouseup", mouseUp);
+  // document.addEventListener("mousedown", mouseDown);
+  // document.addEventListener("mousemove", mouseMove);
+  // document.addEventListener("mouseup", mouseUp);
+  document.getElementById("container-id").addEventListener("mousedown", mouseDown);
+  document.getElementById("container-id").addEventListener("mousemove", mouseMove);
+  document.getElementById("container-id").addEventListener("mouseup", mouseUp);
+
+  // for config box
+  document.getElementById("track-selection-list").addEventListener("click", click);
+  document.getElementById("track-config-text").addEventListener("input", input);
+  document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
 }
 
 function init() {
   initTracks();
   initEventHandlers();
-  initCars("36L", "track-1");
+  //initCars("36L", "track-1");
   initCars("14L15E2BO", "track-2");
   initStatBoxs();
 }

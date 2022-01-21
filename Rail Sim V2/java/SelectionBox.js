@@ -105,16 +105,21 @@ class SelectionBox {
   }
 
   mouseDown(e) {
-    if (this.selections != null) {
-      this.unselect(this.selections);
-    }
+    // check to see if there are selections are clicking on draggable element if true dont do anything
+    if (this.selections != null && e.target.classList.contains("selected")) {
+      // do nothing this will try to move it
+    } else {
+      if (this.selections != null) {
+        this.unselect(this.selections);
+      }
 
-    this.orgX = e.clientX;
-    this.orgY = e.clientY;
+      this.orgX = e.clientX;
+      this.orgY = e.clientY;
+    }
   }
 
   mouseMove(e, isMouseDown) {
-    if (isMouseDown) {
+    if (isMouseDown && this.selections == null) {
       this.updatetDimensions(e.clientX, e.clientY);
       if (!this.isVisible) {
         this.show();
@@ -123,8 +128,11 @@ class SelectionBox {
   }
 
   mouseUp(e) {
-    this.select(document.querySelectorAll(".car"));
-    this.reset();
+    if (this.selections == null) {
+      this.select(document.querySelectorAll(".car"));
+      this.reset();
+    }
+
     this.isMouseDown = false;
   }
 }

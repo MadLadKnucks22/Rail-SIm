@@ -9,6 +9,16 @@ class SelectionBox {
   y2;
   isVisible;
   selections;
+  autopush;
+  dragInfo = {
+    selectionLength: null,
+    selectionTrack: null,
+
+    targetTrack: null,
+    targetSpaceStart: null,
+    targetSpaceEnd: null,
+    validDrop: false,
+  };
 
   constructor(element) {
     this.element = element;
@@ -20,6 +30,7 @@ class SelectionBox {
     this.y2 = 0;
     this.isVisible = false;
     this.selections = null;
+    this.autopush = true;
   }
 
   // pass in users mouse coridnates and update size of selection box
@@ -104,6 +115,30 @@ class SelectionBox {
     this.selections = null;
   }
 
+  #hasNextSpace(arry, index) {
+    if (index + 1 >= arry.length) {
+      return false;
+    }
+
+    if (arry[index + 1].hasChildNodes()) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  #hasPreviousSpace(arry, index) {
+    if (index - 1 < 0) {
+      return false;
+    }
+
+    if (arry[index - 1].hasChildNodes()) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
   mouseDown(e) {
     // check to see if there are selections are clicking on draggable element if true dont do anything
     if (this.selections != null && e.target.classList.contains("selected")) {
@@ -134,5 +169,65 @@ class SelectionBox {
     }
 
     this.isMouseDown = false;
+  }
+
+  dragStart(e) {
+    //look at how many items are moving and how much space we will need
+    e.dataTransfer.setData("text", "");
+    this.dragInfo.selectionLength = this.selections.length;
+    this.dragInfo.selectionTrack = e.target.parentElement.parentElement.id;
+  }
+
+  dragEnter(e) {
+    // maybe update track effects or something here if it is a valid drop location
+    // or color of selected cars to validate drop target
+
+    // get track
+    this.dragInfo.targetTrack = e.target.parentElement.id;
+
+    // get space avalaible
+    // looking to the right
+
+    // look at space
+    if (this.dragInfo.targetTrack != this.dragInfo.selectionTrack && e.target.classList[0] != "car") {
+      let nodes = Array.from(e.srcElement.parentElement.childNodes);
+      let index = nodes.indexOf(e.srcElement);
+      let rCount = 0;
+      let lCount = 0;
+      while (this.#hasNextSpace(nodes, index + rCount)) {
+        rCount++;
+      }
+      while (this.#hasPreviousSpace(nodes, index - lCount)) {
+        lCount++;
+      }
+
+      this.dragInfo.targetSpaceStart = this.autopush
+        ? index + rCount + 1 - this.dragInfo.selectionLength
+        : index - lCount;
+      this.dragInfo.targetSpaceEnd = this.autopush ? index + rCount : index + this.dragInfo.selectionLength;
+
+      if (this.dragInfo.targetSpaceEnd - this.dragInfo.targetSpaceStart + 1 >= this.dragInfo.selectionLength) {
+        this.dragInfo.validDrop = true;
+      } else {
+        this.dragInfo.validDrop = false;
+      }
+
+      console.log(this.dragInfo);
+    }
+  }
+
+  dragOver(e) {
+    e.preventDefault();
+  }
+
+  dragEnd(e) {
+    let counter = 0;
+    if (this.dragInfo.validDrop) {
+      let spotNodes = document.getElementById(this.dragInfo.targetTrack).childNodes;
+      this.selections.forEach((car) => {
+        spotNodes[this.dragInfo.targetSpaceStart + counter].appendChild(car);
+        counter++;
+      });
+    }
   }
 }

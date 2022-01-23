@@ -18,6 +18,9 @@ class StatBox {
   }
 
   updateCarCounts() {
+    this.loaded = 0;
+    this.empty = 0;
+    this.bo = 0;
     this.track.childNodes.forEach((element) => {
       if (element.hasChildNodes()) {
         let carClass = element.children[0].className;

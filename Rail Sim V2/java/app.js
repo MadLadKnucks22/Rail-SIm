@@ -2,6 +2,10 @@
 var box = new SelectionBox(document.querySelector(".selection-box"));
 var config = new ConfigBox(document.querySelector(".config-box"));
 var statboxs = [];
+/**
+ * flag to automatically push all moved cars as far down a track as possible
+ */
+var autopush = true;
 // building the yard div elements
 
 // track variables
@@ -29,7 +33,7 @@ function clearTrack(trackID) {
 
 // function to take string variable and fill track array with either empty, loaded or bo cars
 function initCars(string, track) {
-  let reg = /(\d+BO)|(\d+L)|(\d+E)/g;
+  let reg = /(\d+BO)|(\d+L)|(\d+E)/gi;
 
   if (reg.test(string)) {
     let matchs = string.match(reg);
@@ -60,11 +64,11 @@ function initCars(string, track) {
       let match = m.match(reg2);
       let number = match[1];
       let type = match[2];
-      if (type == "L") {
+      if (type == "L" || type == "l") {
         className = "car loaded";
-      } else if (type == "BO") {
+      } else if (type == "BO" || type == "bo") {
         className = "car bo";
-      } else if (type == "E") {
+      } else if (type == "E" || type == "e") {
         className = "car empty";
       }
 
@@ -137,6 +141,12 @@ function initStatBoxs() {
   }
 }
 
+function updateStatBoxs() {
+  statboxs.forEach((e) => {
+    e.updateCarCounts();
+  });
+}
+
 function initEventHandlers() {
   let isMouseDown = false;
 
@@ -167,17 +177,44 @@ function initEventHandlers() {
     box.mouseUp(e);
   }
 
+  function dragStart(e) {
+    box.dragStart(e);
+  }
+
+  function dragEnter(e) {
+    box.dragEnter(e);
+  }
+
+  function dragOver(e) {
+    box.dragOver(e);
+  }
+
+  function dragEnd(e) {
+    box.dragEnd(e);
+    config.updateTrackConfigurations();
+    config.updateTextInput();
+
+    updateStatBoxs();
+  }
+
   // document.addEventListener("mousedown", mouseDown);
   // document.addEventListener("mousemove", mouseMove);
   // document.addEventListener("mouseup", mouseUp);
   document.getElementById("container-id").addEventListener("mousedown", mouseDown);
   document.getElementById("container-id").addEventListener("mousemove", mouseMove);
   document.getElementById("container-id").addEventListener("mouseup", mouseUp);
+  document.getElementById("container-id").addEventListener("dragstart", dragStart);
 
   // for config box
   document.getElementById("track-selection-list").addEventListener("click", click);
   document.getElementById("track-config-text").addEventListener("input", input);
   document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+
+  // drag events
+  document.querySelectorAll(".spot:not(.number)").forEach((e) => {
+    e.addEventListener("dragenter", dragEnter);
+    e.addEventListener("dragend", dragEnd);
+  });
 }
 
 function init() {

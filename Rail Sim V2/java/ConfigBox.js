@@ -3,10 +3,20 @@ class ConfigBox {
   element;
   trackConfigs = ["0", "0", "0", "0", "0"];
   currentTrackSelection = null;
+  trackIndex = -1;
 
   constructor(element) {
     this.element = element;
     //this.#genHTML();
+  }
+
+  updateTextInput() {
+    // updating track input if the track is selected
+    if (this.trackIndex != -1) {
+      document.getElementById("track-config-text").value = this.config2displayString(
+        this.trackConfigs[this.trackIndex]
+      );
+    }
   }
 
   updateTrackConfigurations() {
@@ -41,11 +51,11 @@ class ConfigBox {
         let spot = spots[j];
         if (spot.hasChildNodes()) {
           let className = spot.childNodes[0].className;
-          if (className == "car loaded") {
+          if (className == "car loaded" || className == "car loaded selected") {
             str += "1";
-          } else if (className == "car empty") {
+          } else if (className == "car empty" || className == "car empty selected") {
             str += "2";
-          } else if (className == "car bo") {
+          } else if (className == "car bo" || className == "car bo selected") {
             str += "3";
           }
         } else {
@@ -127,6 +137,7 @@ class ConfigBox {
       // trackID = "track-" + t.match(reg)[0];
       // console.log(trackID);
       trackID = parseInt(t.match(reg)[0]) - 1;
+      this.trackIndex = trackID;
       this.currentTrackSelection = "track-" + (trackID + 1);
     }
     let text = document.getElementById("track-config-text");

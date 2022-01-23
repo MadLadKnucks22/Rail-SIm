@@ -230,4 +230,8 @@ class SelectionBox {
       });
     }
   }
+
+  keydown(e) {
+    console.log(e);
+  }
 }

@@ -197,6 +197,10 @@ function initEventHandlers() {
     updateStatBoxs();
   }
 
+  function keydown(e) {
+    box.keydown(e);
+  }
+
   // document.addEventListener("mousedown", mouseDown);
   // document.addEventListener("mousemove", mouseMove);
   // document.addEventListener("mouseup", mouseUp);
@@ -204,6 +208,7 @@ function initEventHandlers() {
   document.getElementById("container-id").addEventListener("mousemove", mouseMove);
   document.getElementById("container-id").addEventListener("mouseup", mouseUp);
   document.getElementById("container-id").addEventListener("dragstart", dragStart);
+  document.getElementById("container-id").addEventListener("keydown", keydown);
 
   // for config box
   document.getElementById("track-selection-list").addEventListener("click", click);

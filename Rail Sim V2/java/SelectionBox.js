@@ -212,7 +212,7 @@ class SelectionBox {
         this.dragInfo.validDrop = false;
       }
 
-      console.log(this.dragInfo);
+      //console.log(this.dragInfo);
     }
   }
 
@@ -232,6 +232,93 @@ class SelectionBox {
   }
 
   keydown(e) {
-    console.log(e);
+    // moving the selection left
+    if (this.selections.length == 0) {
+      console.log(e);
+      return;
+    }
+    if (e.key == "ArrowLeft") {
+      let nodes = Array.from(this.selections[0].parentElement.parentElement.childNodes);
+      let index = nodes.indexOf(this.selections[0].parentElement);
+      if (this.#hasPreviousSpace(nodes, index)) {
+        // move all selections one to the left
+        let counter = 0;
+        this.selections.forEach((e) => {
+          nodes[index + counter - 1].appendChild(e);
+          counter++;
+        });
+      }
+    }
+
+    // moving selection right
+    if (e.key == "ArrowRight") {
+      let nodes = Array.from(this.selections[0].parentElement.parentElement.childNodes);
+      let index = nodes.indexOf(this.selections[this.selections.length - 1].parentElement);
+      if (this.#hasNextSpace(nodes, index)) {
+        // move all selections one to the right
+        let counter = 0;
+        for (let i = this.selections.length - 1; i >= 0; i--) {
+          nodes[index + 1 - counter].appendChild(this.selections[i]);
+          counter++;
+        }
+      }
+    }
+
+    // making the cars empty
+    if (e.code == "KeyE") {
+      this.selections.forEach((e) => {
+        // remove loaded and bo
+        if (e.classList.contains("loaded")) {
+          e.classList.remove("loaded");
+        } else if (e.classList.contains("bo")) {
+          e.classList.remove("bo");
+        }
+
+        if (!e.classList.contains("empty")) {
+          e.classList.add("empty");
+        }
+      });
+
+      // unselect everything
+      this.unselect(this.selections);
+    }
+
+    // making the cars loaded
+    if (e.code == "KeyL") {
+      this.selections.forEach((e) => {
+        // remove empty and bo
+        if (e.classList.contains("empty")) {
+          e.classList.remove("empty");
+        } else if (e.classList.contains("bo")) {
+          e.classList.remove("bo");
+        }
+
+        if (!e.classList.contains("loaded")) {
+          e.classList.add("loaded");
+        }
+      });
+
+      // unselect everything
+      this.unselect(this.selections);
+    }
+
+    // making the cars bo
+    if (e.code == "KeyB") {
+      this.selections.forEach((e) => {
+        // remove empty and loaded
+        if (e.classList.contains("empty")) {
+          e.classList.remove("empty");
+        } else if (e.classList.contains("loaded")) {
+          e.classList.remove("loaded");
+        }
+
+        if (!e.classList.contains("bo")) {
+          e.classList.add("bo");
+        }
+      });
+
+      // unselect everything
+      this.unselect(this.selections);
+    }
   }
 }

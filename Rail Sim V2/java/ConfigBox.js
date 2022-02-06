@@ -8,6 +8,11 @@ class ConfigBox {
   constructor(element) {
     this.element = element;
     //this.#genHTML();
+
+    // load in local storage if it exists
+    if (localStorage.getItem("track-config") != null) {
+      this.trackConfigs = JSON.parse(localStorage.getItem("track-config"));
+    }
   }
 
   updateTextInput() {
@@ -29,6 +34,9 @@ class ConfigBox {
     this.trackConfigs[4] = tc[2];
     this.trackConfigs[5] = tc[1];
     this.trackConfigs[6] = tc[0];
+
+    // update local storage
+    localStorage.setItem("track-config", JSON.stringify(this.trackConfigs));
   }
 
   getTrackConfigurations() {
@@ -188,8 +196,9 @@ class ConfigBox {
     //initCars()
     let str = e.target.value;
     if (this.#isInputValid(this.currentTrackSelection, str)) {
-      console.log("is valid");
+      //console.log("is valid");
       initCars(str, this.currentTrackSelection);
+      this.updateTrackConfigurations();
     }
   }
 

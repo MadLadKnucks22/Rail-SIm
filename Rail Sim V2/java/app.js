@@ -84,6 +84,18 @@ function initCars(string, track) {
   }
 }
 
+function initCarsFromStorage() {
+  if (localStorage.getItem("track-config") != null) {
+    initCars(config.config2displayString(config.trackConfigs[0]), "track-1");
+    initCars(config.config2displayString(config.trackConfigs[1]), "track-2");
+    initCars(config.config2displayString(config.trackConfigs[2]), "track-3");
+    initCars(config.config2displayString(config.trackConfigs[3]), "track-4");
+    initCars(config.config2displayString(config.trackConfigs[4]), "track-5");
+    initCars(config.config2displayString(config.trackConfigs[5]), "track-6");
+    initCars(config.config2displayString(config.trackConfigs[6]), "track-7");
+  }
+}
+
 function initTracks() {
   for (let i = 6; i >= 0; i--) {
     // track wrapper
@@ -199,6 +211,10 @@ function initEventHandlers() {
 
   function keydown(e) {
     box.keydown(e);
+    config.updateTrackConfigurations();
+    config.updateTextInput();
+    // updating stat boxes
+    updateStatBoxs();
   }
 
   // document.addEventListener("mousedown", mouseDown);
@@ -208,12 +224,13 @@ function initEventHandlers() {
   document.getElementById("container-id").addEventListener("mousemove", mouseMove);
   document.getElementById("container-id").addEventListener("mouseup", mouseUp);
   document.getElementById("container-id").addEventListener("dragstart", dragStart);
-  document.getElementById("container-id").addEventListener("keydown", keydown);
+  //document.getElementById("container-id").addEventListener("keydown", keydown);
 
   // for config box
   document.getElementById("track-selection-list").addEventListener("click", click);
   document.getElementById("track-config-text").addEventListener("input", input);
-  document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+  //document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+  document.addEventListener("keydown", keydown);
 
   // drag events
   document.querySelectorAll(".spot:not(.number)").forEach((e) => {
@@ -226,7 +243,9 @@ function init() {
   initTracks();
   initEventHandlers();
   //initCars("36L", "track-1");
-  initCars("14L15E2BO", "track-2");
+  //initCars("14L15E2BO", "track-2");
+  // update cars from local storage if there is any
+  initCarsFromStorage();
   initStatBoxs();
 }
 

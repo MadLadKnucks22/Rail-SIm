@@ -14,3 +14,13 @@
 .selection-box-hide {
   display: none;
 }
+
+
+.selection-count-box{
+
+  position: absolute;
+  left: 100px;
+  top: 100px;
+  width: 2rem;
+  height: 2rem;
+}

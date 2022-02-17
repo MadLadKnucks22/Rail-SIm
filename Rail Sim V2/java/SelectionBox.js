@@ -10,6 +10,7 @@ class SelectionBox {
   isVisible;
   selections;
   autopush;
+  currentSelectionCount = 0;
   dragInfo = {
     selectionLength: null,
     selectionTrack: null,
@@ -19,6 +20,7 @@ class SelectionBox {
     targetSpaceEnd: null,
     validDrop: false,
   };
+  history = [];
 
   constructor(element) {
     this.element = element;
@@ -78,6 +80,7 @@ class SelectionBox {
     this.element.style.display = "none";
   }
 
+
   /**
    * Method used when after mouse is released looks if any cars are in the selection box area and makes them selected items
    */
@@ -105,6 +108,25 @@ class SelectionBox {
       }
     });
     this.selections = selectedElements;
+  }
+
+
+  updateSelectionCount(elements){
+    function isOverLapping(box1, box2) {
+      return !(box2.x1 > box1.right || box2.x2 < box1.left || box2.y1 > box1.bottom || box2.y2 < box1.top);
+    }
+
+    let count = 0;
+
+    elements.forEach((element) => {
+      let box = element.getBoundingClientRect();
+      if (isOverLapping(box, this)) {
+        // updating class
+          count++;
+      }
+    });
+
+    return count;
   }
 
   unselect(elements) {
@@ -159,7 +181,13 @@ class SelectionBox {
       if (!this.isVisible) {
         this.show();
       }
+
+      // get selection count
+      let elements = document.querySelectorAll(".car");
+      this.currentSelectionCount = this.updateSelectionCount(elements);
+
     }
+    
   }
 
   mouseUp(e) {
@@ -169,6 +197,7 @@ class SelectionBox {
     }
 
     this.isMouseDown = false;
+    this.currentSelectionCount = 0;
   }
 
   dragStart(e) {
@@ -217,6 +246,9 @@ class SelectionBox {
   }
 
   dragOver(e) {
+    // update selection box info
+
+    // getting the boxes 
     e.preventDefault();
   }
 
@@ -229,14 +261,25 @@ class SelectionBox {
         counter++;
       });
     }
+
+    // update history stuff here
+    //TODO
+    this.history.push(`${this.dragInfo.selectionLength} From Track: ${this.dragInfo.selectionTrack[6]} -> Track: ${this.dragInfo.targetTrack[6]}`);
   }
 
   keydown(e) {
     // moving the selection left
     if (this.selections.length == 0) {
-      console.log(e);
       return;
     }
+
+    // deleting the cars
+    if(e.key == "Backspace"){
+      this.selections.forEach((ele) => {
+        ele.remove();
+      })
+    }
+
     if (e.key == "ArrowLeft") {
       let nodes = Array.from(this.selections[0].parentElement.parentElement.childNodes);
       let index = nodes.indexOf(this.selections[0].parentElement);
@@ -321,4 +364,55 @@ class SelectionBox {
       this.unselect(this.selections);
     }
   }
+}
+
+class SelectionCountBox{
+
+
+
+constructor(element){
+  this.element = element;
+  this.element.innerHTML = "";
+  this.hide();
+}
+
+updatePosition(e){
+  this.element.style.left = `calc(${e.clientX}px + 2rem)`;
+  this.element.style.top  = `calc(${e.clientY}px - 2rem)`;
+}
+
+updateCount(count){
+  this.element.innerHTML = (count > 0) ? count : "";
+}
+
+show(){
+  this.element.style.display = "inline";
+  this.element.style.opacity = 1;
+}
+
+hide(){
+  this.element.display = "none";
+  this.element.style.opacity = 0;
+  this.element.innerHTML = "";
+}
+
+
+// event handlers
+mouseDown(e){
+  this.updatePosition(e);
+  this.show();
+}
+
+mouseMove(e, isMouseDown){
+  if(isMouseDown){
+    selectionCountBox.updatePosition(e);
+    selectionCountBox.updateCount(box.currentSelectionCount);
+  }
+}
+
+
+mouseUp(){
+  this.hide();
+}
+
 }

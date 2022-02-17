@@ -403,10 +403,10 @@ mouseDown(e){
   this.show();
 }
 
-mouseMove(e, isMouseDown){
+mouseMove(e, isMouseDown, count){
   if(isMouseDown){
     selectionCountBox.updatePosition(e);
-    selectionCountBox.updateCount(box.currentSelectionCount);
+    selectionCountBox.updateCount(count);
   }
 }
 

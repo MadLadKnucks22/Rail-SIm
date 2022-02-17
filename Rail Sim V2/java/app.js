@@ -183,9 +183,8 @@ function initEventHandlers() {
   }
 
   function mouseMove(e) {
-    box.mouseMove(e, isMouseDown);
-    
-    
+    box.mouseMove(e, isMouseDown); 
+    selectionCountBox.mouseMove(e, isMouseDown, box.currentSelectionCount);
   }
 
   function mouseUp(e) {

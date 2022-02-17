@@ -1,5 +1,6 @@
 // Global variables
 var box = new SelectionBox(document.querySelector(".selection-box"));
+var selectionCountBox = new SelectionCountBox(document.getElementById("selection-count-box-id"));
 var config = new ConfigBox(document.querySelector(".config-box"));
 var statboxs = [];
 /**
@@ -178,15 +179,19 @@ function initEventHandlers() {
     // updating selection box intial coordinates
     isMouseDown = true;
     box.mouseDown(e);
+    selectionCountBox.mouseDown(e);
   }
 
   function mouseMove(e) {
     box.mouseMove(e, isMouseDown);
+    
+    
   }
 
   function mouseUp(e) {
     isMouseDown = false;
     box.mouseUp(e);
+    selectionCountBox.mouseUp(e);
   }
 
   function dragStart(e) {
@@ -205,7 +210,7 @@ function initEventHandlers() {
     box.dragEnd(e);
     config.updateTrackConfigurations();
     config.updateTextInput();
-
+    
     updateStatBoxs();
   }
 

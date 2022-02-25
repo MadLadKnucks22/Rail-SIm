@@ -1,6 +1,6 @@
 // Global variables
 var box = new SelectionBox(document.querySelector(".selection-box"));
-var config = new ConfigBox(document.querySelector(".config-box"));
+//var config = new ConfigBox(document.querySelector(".config-box"));
 var statboxs = [];
 /**
  * flag to automatically push all moved cars as far down a track as possible
@@ -150,17 +150,17 @@ function updateStatBoxs() {
 function initEventHandlers() {
   let isMouseDown = false;
 
-  function click(e) {
-    config.click(e);
-  }
+  // function click(e) {
+  //   config.click(e);
+  // }
 
-  function input(e) {
-    config.input(e);
-  }
+  // function input(e) {
+  //   config.input(e);
+  // }
 
-  function configKeyDown(e) {
-    config.keyDown(e);
-  }
+  // function configKeyDown(e) {
+  //   config.keyDown(e);
+  // }
 
   function mouseDown(e) {
     // updating selection box intial coordinates
@@ -191,8 +191,8 @@ function initEventHandlers() {
 
   function dragEnd(e) {
     box.dragEnd(e);
-    config.updateTrackConfigurations();
-    config.updateTextInput();
+    // config.updateTrackConfigurations();
+    // config.updateTextInput();
 
     updateStatBoxs();
   }
@@ -211,9 +211,9 @@ function initEventHandlers() {
   document.getElementById("container-id").addEventListener("keydown", keydown);
 
   // for config box
-  document.getElementById("track-selection-list").addEventListener("click", click);
-  document.getElementById("track-config-text").addEventListener("input", input);
-  document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+  // document.getElementById("track-selection-list").addEventListener("click", click);
+  // document.getElementById("track-config-text").addEventListener("input", input);
+  // document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
 
   // drag events
   document.querySelectorAll(".spot:not(.number)").forEach((e) => {

@@ -1,7 +1,7 @@
 // Global variables
 var box = new SelectionBox(document.querySelector(".selection-box"));
 var selectionCountBox = new SelectionCountBox(document.getElementById("selection-count-box-id"));
-var config = new ConfigBox(document.querySelector(".config-box"));
+var config = new ConfigBox();
 var statboxs = [];
 /**
  * flag to automatically push all moved cars as far down a track as possible
@@ -163,18 +163,6 @@ function updateStatBoxs() {
 function initEventHandlers() {
   let isMouseDown = false;
 
-  function click(e) {
-    config.click(e);
-  }
-
-  function input(e) {
-    config.input(e);
-  }
-
-  function configKeyDown(e) {
-    config.keyDown(e);
-  }
-
   function mouseDown(e) {
     // updating selection box intial coordinates
     isMouseDown = true;
@@ -201,14 +189,10 @@ function initEventHandlers() {
     box.dragEnter(e);
   }
 
-  function dragOver(e) {
-    box.dragOver(e);
-  }
 
   function dragEnd(e) {
     box.dragEnd(e);
     config.updateTrackConfigurations();
-    config.updateTextInput();
     
     updateStatBoxs();
   }
@@ -216,24 +200,16 @@ function initEventHandlers() {
   function keydown(e) {
     box.keydown(e);
     config.updateTrackConfigurations();
-    config.updateTextInput();
-    // updating stat boxes
     updateStatBoxs();
   }
 
-  // document.addEventListener("mousedown", mouseDown);
-  // document.addEventListener("mousemove", mouseMove);
-  // document.addEventListener("mouseup", mouseUp);
+
   document.getElementById("container-id").addEventListener("mousedown", mouseDown);
   document.getElementById("container-id").addEventListener("mousemove", mouseMove);
   document.getElementById("container-id").addEventListener("mouseup", mouseUp);
   document.getElementById("container-id").addEventListener("dragstart", dragStart);
-  //document.getElementById("container-id").addEventListener("keydown", keydown);
 
-  // for config box
-  document.getElementById("track-selection-list").addEventListener("click", click);
-  document.getElementById("track-config-text").addEventListener("input", input);
-  //document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+  // key event handler
   document.addEventListener("keydown", keydown);
 
   // drag events
@@ -246,9 +222,6 @@ function initEventHandlers() {
 function init() {
   initTracks();
   initEventHandlers();
-  //initCars("36L", "track-1");
-  //initCars("14L15E2BO", "track-2");
-  // update cars from local storage if there is any
   initCarsFromStorage();
   initStatBoxs();
 }

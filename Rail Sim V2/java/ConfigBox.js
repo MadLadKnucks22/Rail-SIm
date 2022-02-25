@@ -1,3 +1,6 @@
+/**
+ * Pretty much outdated now, the only thing that it is used for is to keep track of the current track configuration from the local storage
+ */
 class ConfigBox {
   // class variables
   element;
@@ -5,8 +8,8 @@ class ConfigBox {
   currentTrackSelection = null;
   trackIndex = -1;
 
-  constructor(element) {
-    this.element = element;
+  constructor() {
+    //this.element = element;
     //this.#genHTML();
 
     // load in local storage if it exists

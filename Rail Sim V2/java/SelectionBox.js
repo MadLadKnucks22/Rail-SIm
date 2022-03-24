@@ -269,6 +269,9 @@ class SelectionBox {
 
   keydown(e) {
     // moving the selection left
+    if(this.selections == null){
+      return;
+    }
     if (this.selections.length == 0) {
       return;
     }

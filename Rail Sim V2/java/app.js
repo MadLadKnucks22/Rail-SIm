@@ -2,7 +2,9 @@
 var box = new SelectionBox(document.querySelector(".selection-box"));
 var selectionCountBox = new SelectionCountBox(document.getElementById("selection-count-box-id"));
 var config = new ConfigBox();
+var carButtons = [];
 var statboxs = [];
+var log = new ActionLog();
 /**
  * flag to automatically push all moved cars as far down a track as possible
  */
@@ -219,11 +221,84 @@ function initEventHandlers() {
   });
 }
 
+// init buttons
+function initConfigButtonsEventHandlers(){
+
+  function saveClick(e){
+    config.saveTrack();
+  }
+
+  function loadClick(e){
+    if(config.currentlySavedTrack == null){
+      return;
+    }
+    
+    clearTrack("track-1");
+    clearTrack("track-2");
+    clearTrack("track-3");
+    clearTrack("track-4");
+    clearTrack("track-5");
+    clearTrack("track-6");
+    clearTrack("track-7");
+    
+    initCars(config.config2displayString(config.currentlySavedTrack[0]), "track-1");
+    initCars(config.config2displayString(config.currentlySavedTrack[1]), "track-2");
+    initCars(config.config2displayString(config.currentlySavedTrack[2]), "track-3");
+    initCars(config.config2displayString(config.currentlySavedTrack[3]), "track-4");
+    initCars(config.config2displayString(config.currentlySavedTrack[4]), "track-5");
+    initCars(config.config2displayString(config.currentlySavedTrack[5]), "track-6");
+    initCars(config.config2displayString(config.currentlySavedTrack[6]), "track-7");
+    config.updateTrackConfigurations();
+    updateStatBoxs();
+  }
+
+  document.getElementById("save-track-button-id").addEventListener("click", saveClick);
+  document.getElementById("load-track-button-id").addEventListener("click", loadClick);
+}
+
+function initButtons(){
+
+  
+  for(let i = 1; i <= 5; i++){
+    carButtons[i-1] = new CarButton(i);
+    document.getElementById(`track-wrapper-${i}`).appendChild(carButtons[i-1].wrapper);
+  }
+
+  initCarButtonEventHandlers();
+  initConfigButtonsEventHandlers();
+  
+
+}
+
+function initCarButtonEventHandlers(){
+
+  for(let i = 0; i < carButtons.length; i++){
+    let clickAdd = function(e){
+      carButtons[i].clickPlus(config, e.shiftKey, e.ctrlKey);
+      updateStatBoxs();
+    }
+
+    let clickSub = function(e){
+      carButtons[i].clickSub(config, e.shiftKey, e.ctrlKey);
+      updateStatBoxs();
+    }
+
+    document.getElementById(`car-button-add-${i+1}`).addEventListener("click", clickAdd);
+    document.getElementById(`car-button-sub-${i+1}`).addEventListener("click", clickSub);
+  }
+}
+
+
+
 function init() {
   initTracks();
   initEventHandlers();
   initCarsFromStorage();
   initStatBoxs();
+  initButtons();
+  
 }
 
 init();
+
+

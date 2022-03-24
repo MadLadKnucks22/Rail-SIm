@@ -7,6 +7,7 @@ class ConfigBox {
   trackConfigs = ["0", "0", "0", "0", "0"];
   currentTrackSelection = null;
   trackIndex = -1;
+  currentlySavedTrack = null
 
   constructor() {
     //this.element = element;
@@ -16,6 +17,16 @@ class ConfigBox {
     if (localStorage.getItem("track-config") != null) {
       this.trackConfigs = JSON.parse(localStorage.getItem("track-config"));
     }
+
+    // load in local storage to currently saved track if it exists
+    if (localStorage.getItem("currently-saved-track-config") != null) {
+      this.currentlySavedTrack = JSON.parse(localStorage.getItem("currently-saved-track-config"));
+    }
+  }
+
+  saveTrack(){
+    this.currentlySavedTrack = Array.from(this.trackConfigs);
+    localStorage.setItem("currently-saved-track-config", JSON.stringify(this.currentlySavedTrack));
   }
 
   updateTextInput() {

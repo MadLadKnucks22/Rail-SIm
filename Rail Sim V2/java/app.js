@@ -12,13 +12,13 @@ var autopush = true;
 // building the yard div elements
 
 // track variables
-var trackLengths = [36, 34, 26, 22, 21, 10, 10];
+var trackLengths = [36, 34, 26, 22, 20, 10, 10];
 var yard = {
   track1: { spots: new Array(36).fill(null), length: 36 },
   track2: { spots: new Array(34).fill(null), length: 34 },
   track3: { spots: new Array(26).fill(null), length: 26 },
   track4: { spots: new Array(22).fill(null), length: 22 },
-  track5: { spots: new Array(21).fill(null), length: 21 },
+  track5: { spots: new Array(20).fill(null), length: 20 },
   track6: { spots: new Array(10).fill(null), length: 10 },
   track7: { spots: new Array(10).fill(null), length: 10 },
 };
@@ -162,6 +162,19 @@ function updateStatBoxs() {
   });
 }
 
+function globalKeyEventHandler(e){
+
+  function undoAction(action){
+    if(action.type == "Move"){
+
+    }
+  }
+
+  if(e.key == "z" && e.ctrlKey == true){
+    console.log("undo action");
+  }
+}
+
 function initEventHandlers() {
   let isMouseDown = false;
 
@@ -193,13 +206,14 @@ function initEventHandlers() {
 
 
   function dragEnd(e) {
-    box.dragEnd(e);
+    box.dragEnd(e, log);
     config.updateTrackConfigurations();
     
     updateStatBoxs();
   }
 
   function keydown(e) {
+    globalKeyEventHandler(e)
     box.keydown(e);
     config.updateTrackConfigurations();
     updateStatBoxs();
@@ -232,7 +246,7 @@ function initConfigButtonsEventHandlers(){
     if(config.currentlySavedTrack == null){
       return;
     }
-    
+
     clearTrack("track-1");
     clearTrack("track-2");
     clearTrack("track-3");

@@ -252,7 +252,12 @@ class SelectionBox {
     e.preventDefault();
   }
 
-  dragEnd(e) {
+  dragEnd(e, actionLog) {
+
+    // getting start and end spots for the selection for the action log
+    let selectionNodes = Array.from(this.selections[0].parentElement.parentElement.childNodes);
+    let selectionIndex = selectionNodes.indexOf(this.selections[0].parentElement);
+
     let counter = 0;
     if (this.dragInfo.validDrop) {
       let spotNodes = document.getElementById(this.dragInfo.targetTrack).childNodes;
@@ -265,6 +270,16 @@ class SelectionBox {
     // update history stuff here
     //TODO
     this.history.push(`${this.dragInfo.selectionLength} From Track: ${this.dragInfo.selectionTrack[6]} -> Track: ${this.dragInfo.targetTrack[6]}`);
+    actionLog.addAction( {
+      type: "Move",
+      fromTrack: this.dragInfo.selectionTrack[6],
+      fromTrackStartSpace: selectionIndex,
+      fromTrackEndSpace: selectionIndex + this.dragInfo.selectionLength -1,
+      toTrack: this.dragInfo.targetTrack[6],
+      toTrackStartSpace: this.dragInfo.targetSpaceStart,
+      toTrackEndSpace: this.dragInfo.targetSpaceEnd,
+      cars: this.dragInfo.selectionLength
+     })
   }
 
   keydown(e) {

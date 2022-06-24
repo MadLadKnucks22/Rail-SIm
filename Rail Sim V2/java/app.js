@@ -1,8 +1,10 @@
 // Global variables
 var box = new SelectionBox(document.querySelector(".selection-box"));
 var selectionCountBox = new SelectionCountBox(document.getElementById("selection-count-box-id"));
-var config = new ConfigBox(document.querySelector(".config-box"));
+var config = new ConfigBox();
+var carButtons = [];
 var statboxs = [];
+var log = new ActionLog();
 /**
  * flag to automatically push all moved cars as far down a track as possible
  */
@@ -10,13 +12,13 @@ var autopush = true;
 // building the yard div elements
 
 // track variables
-var trackLengths = [36, 34, 26, 22, 21, 10, 10];
+var trackLengths = [36, 34, 26, 22, 20, 10, 10];
 var yard = {
   track1: { spots: new Array(36).fill(null), length: 36 },
   track2: { spots: new Array(34).fill(null), length: 34 },
   track3: { spots: new Array(26).fill(null), length: 26 },
   track4: { spots: new Array(22).fill(null), length: 22 },
-  track5: { spots: new Array(21).fill(null), length: 21 },
+  track5: { spots: new Array(20).fill(null), length: 20 },
   track6: { spots: new Array(10).fill(null), length: 10 },
   track7: { spots: new Array(10).fill(null), length: 10 },
 };
@@ -160,20 +162,21 @@ function updateStatBoxs() {
   });
 }
 
+function globalKeyEventHandler(e){
+
+  function undoAction(action){
+    if(action.type == "Move"){
+
+    }
+  }
+
+  if(e.key == "z" && e.ctrlKey == true){
+    console.log("undo action");
+  }
+}
+
 function initEventHandlers() {
   let isMouseDown = false;
-
-  function click(e) {
-    config.click(e);
-  }
-
-  function input(e) {
-    config.input(e);
-  }
-
-  function configKeyDown(e) {
-    config.keyDown(e);
-  }
 
   function mouseDown(e) {
     // updating selection box intial coordinates
@@ -201,39 +204,28 @@ function initEventHandlers() {
     box.dragEnter(e);
   }
 
-  function dragOver(e) {
-    box.dragOver(e);
-  }
 
   function dragEnd(e) {
-    box.dragEnd(e);
+    box.dragEnd(e, log);
     config.updateTrackConfigurations();
-    config.updateTextInput();
     
     updateStatBoxs();
   }
 
   function keydown(e) {
+    globalKeyEventHandler(e)
     box.keydown(e);
     config.updateTrackConfigurations();
-    config.updateTextInput();
-    // updating stat boxes
     updateStatBoxs();
   }
 
-  // document.addEventListener("mousedown", mouseDown);
-  // document.addEventListener("mousemove", mouseMove);
-  // document.addEventListener("mouseup", mouseUp);
+
   document.getElementById("container-id").addEventListener("mousedown", mouseDown);
   document.getElementById("container-id").addEventListener("mousemove", mouseMove);
   document.getElementById("container-id").addEventListener("mouseup", mouseUp);
   document.getElementById("container-id").addEventListener("dragstart", dragStart);
-  //document.getElementById("container-id").addEventListener("keydown", keydown);
 
-  // for config box
-  document.getElementById("track-selection-list").addEventListener("click", click);
-  document.getElementById("track-config-text").addEventListener("input", input);
-  //document.getElementById("track-config-text").addEventListener("keydown", configKeyDown);
+  // key event handler
   document.addEventListener("keydown", keydown);
 
   // drag events
@@ -243,14 +235,84 @@ function initEventHandlers() {
   });
 }
 
+// init buttons
+function initConfigButtonsEventHandlers(){
+
+  function saveClick(e){
+    config.saveTrack();
+  }
+
+  function loadClick(e){
+    if(config.currentlySavedTrack == null){
+      return;
+    }
+
+    clearTrack("track-1");
+    clearTrack("track-2");
+    clearTrack("track-3");
+    clearTrack("track-4");
+    clearTrack("track-5");
+    clearTrack("track-6");
+    clearTrack("track-7");
+    
+    initCars(config.config2displayString(config.currentlySavedTrack[0]), "track-1");
+    initCars(config.config2displayString(config.currentlySavedTrack[1]), "track-2");
+    initCars(config.config2displayString(config.currentlySavedTrack[2]), "track-3");
+    initCars(config.config2displayString(config.currentlySavedTrack[3]), "track-4");
+    initCars(config.config2displayString(config.currentlySavedTrack[4]), "track-5");
+    initCars(config.config2displayString(config.currentlySavedTrack[5]), "track-6");
+    initCars(config.config2displayString(config.currentlySavedTrack[6]), "track-7");
+    config.updateTrackConfigurations();
+    updateStatBoxs();
+  }
+
+  document.getElementById("save-track-button-id").addEventListener("click", saveClick);
+  document.getElementById("load-track-button-id").addEventListener("click", loadClick);
+}
+
+function initButtons(){
+
+  
+  for(let i = 1; i <= 5; i++){
+    carButtons[i-1] = new CarButton(i);
+    document.getElementById(`track-wrapper-${i}`).appendChild(carButtons[i-1].wrapper);
+  }
+
+  initCarButtonEventHandlers();
+  initConfigButtonsEventHandlers();
+  
+
+}
+
+function initCarButtonEventHandlers(){
+
+  for(let i = 0; i < carButtons.length; i++){
+    let clickAdd = function(e){
+      carButtons[i].clickPlus(config, e.shiftKey, e.ctrlKey);
+      updateStatBoxs();
+    }
+
+    let clickSub = function(e){
+      carButtons[i].clickSub(config, e.shiftKey, e.ctrlKey);
+      updateStatBoxs();
+    }
+
+    document.getElementById(`car-button-add-${i+1}`).addEventListener("click", clickAdd);
+    document.getElementById(`car-button-sub-${i+1}`).addEventListener("click", clickSub);
+  }
+}
+
+
+
 function init() {
   initTracks();
   initEventHandlers();
-  //initCars("36L", "track-1");
-  //initCars("14L15E2BO", "track-2");
-  // update cars from local storage if there is any
   initCarsFromStorage();
   initStatBoxs();
+  initButtons();
+  
 }
 
 init();
+
+

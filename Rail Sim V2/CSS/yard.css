@@ -8,7 +8,7 @@
 
 .track-wrapper {
   display: grid;
-  grid-template-columns: min-content min-content;
+  grid-template-columns: min-content min-content min-content;
   column-gap: 0;
 }
 
@@ -85,4 +85,16 @@
 .car.selected {
   background: rgba(0, 102, 204, 0.3);
   border: solid 2px #0066cc;
+}
+
+.car-button{
+  display: inline-block;
+}
+
+.car-button-wrapper{
+
+  display: grid;
+  grid-template-columns: 1vw 1vw;
+  height: min-content;
+  column-gap: 10px;
 }
